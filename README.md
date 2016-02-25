@@ -38,7 +38,8 @@ The simple map above requires only a few things:
 
 The script.js file now looks like this: 
 
-```// initialize the map
+```
+// initialize the map
 var map = L.map('map').setView([ 57.70887000, 11.97456000], 10);
 
 // load a tile layer
