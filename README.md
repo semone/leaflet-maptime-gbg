@@ -47,7 +47,7 @@ L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
       maxZoom: 17,
       minZoom: 0
 }).addTo(map);
-````
+```
 
 ### What have been done in the script.js? 
 1. Created a ```map``` variable
@@ -194,12 +194,130 @@ At this point we begin to see the power of combining built-in Leaflet features w
 4. Combining style with onEachFeature accomplishes something similar to what pointToLayer did for the trams. style provides some instructions for how to turn the GeoJSON feature into a map layer, and onEachFeature provides some instructions for what to do with that layer.
 
 
+### Plug in and thin out
+
+The beauty of Leaflet being open source—and of the particular way it's written—is that it's functionality and features can be extended and customized to your heart's content. There's a whole slew of plugins people have written to extend the Leaflet core, most of them very easy to drop right into your project. We'll use a popular one, Leaflet.markercluster. This plugin will make the map a little less cluttered!
+
+Define these new icons and define your trams layer like this. 
+
+```
+var stationIcon = L.icon({
+    iconUrl: 'station.png',
+    iconSize: [20,20]
+});
+var airIcon = L.icon({
+    iconUrl: 'plane.png',
+    iconSize: [30,30]
+});
+var tramsLayer = L.geoJson(trams, {
+	pointToLayer: function(feature,latlng){
+		var marker = L.marker(latlng);
+		if (feature.properties.type === 'station') {
+			marker.setIcon(stationIcon);
+		} else if (feature.properties.type == 'tram_stop') {
+			marker.setIcon(tramIcon);
+		} else { // aerodrome
+			marker.setIcon(airIcon);
+		}
+		var info = "";  
+		if (feature.properties.ref !== null) {
+			info = feature.properties.ref;
+		}
+    	marker.bindPopup(feature.properties.name + '<br/>' + info);
+    	return marker;
+ 	}
+});
+
+var clusters = L.markerClusterGroup();
+clusters.addLayer(tramsLayer);
+map.addLayer(clusters);
+```
+The final map:
+
+![Map for step 6](images/step6.png)
+
+And this is what the final file should look like!
+
+```
+// initialize the map
+var map = L.map('map').setView([ 57.70887000, 11.97456000], 10);
+
+// load a tile layer
+L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+      maxZoom: 17,
+      minZoom: 0
+}).addTo(map);
+
+
+// Create custom marker
+var tramIcon = L.icon({
+    iconUrl: 'tram.png',
+    iconSize: [20,20]
+});
+var stationIcon = L.icon({
+    iconUrl: 'station.png',
+    iconSize: [20,20]
+});
+var airIcon = L.icon({
+    iconUrl: 'plane.png',
+    iconSize: [30,30]
+});
+
+L.geoJson( municipalities, {
+    style: function(feature){
+      var fillColor,
+          density = feature.properties.KNBEF96;
+      if ( density > 100000 ) fillColor = "#006837";
+      else if ( density > 40000 ) fillColor = "#31a354";
+      else if ( density > 20000 ) fillColor = "#78c679";
+      else if ( density > 10000 ) fillColor = "#c2e699";
+      else if ( density > 0 ) fillColor = "#ffffcc";
+      else fillColor = "#f7f7f7";  // no data
+      return { color: "#999", weight: 1, fillColor: fillColor, fillOpacity: .6 };
+    },
+    onEachFeature: function( feature, layer ){
+      layer.bindPopup( "<strong>" + feature.properties.KNNAMN + "</strong><br/>" + feature.properties.KNBEF96 + " invånare" )
+    }
+}).addTo(map);
+
+
+var tramsLayer = L.geoJson(trams, {
+	pointToLayer: function(feature,latlng){
+		var marker = L.marker(latlng);
+		if (feature.properties.type === 'station') {
+			marker.setIcon(stationIcon);
+		} else if (feature.properties.type == 'tram_stop') {
+			marker.setIcon(tramIcon);
+		} else { // aerodrome
+			marker.setIcon(airIcon);
+		}
+		var info = "";  
+		if (feature.properties.ref !== null) {
+			info = feature.properties.ref;
+		}
+    	marker.bindPopup(feature.properties.name + '<br/>' + info);
+    	return marker;
+ 	}
+});
+
+var clusters = L.markerClusterGroup();
+clusters.addLayer(tramsLayer);
+map.addLayer(clusters);
+```
+
+## GOOD JOB!
+
+
+
+
+
+
 
 
 
 
  
-
 
 
 
