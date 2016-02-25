@@ -73,7 +73,9 @@ For this tutorial we will start off using some stations data over Gothenburg!
 
 To get the map showing in image one add this line to the end your script.js file. Save and refresh the index.html in your browser!
 
-```L.geoJson(trams).addTo(map);```
+```
+L.geoJson(trams).addTo(map);
+```
 
 Where does the trams come from? They are included in the index.html file. If you want to check out the geojson data, open the trams.geojson file. The data is from OpenStreetMap it was downloaded as a shape file and converted to Geojson using Qgis. 
 
