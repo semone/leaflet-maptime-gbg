@@ -152,7 +152,10 @@ Great we have point data on our map, let's add som polygons. Here we should use 
 
 Add this line previous to your trams layer.
 
-```L.geoJson(municipalities).addTo(map);```
+```
+L.geoJson(municipalities).addTo(map);
+
+```
 
 You will see something like this. 
 
